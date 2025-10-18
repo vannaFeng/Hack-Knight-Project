@@ -35,7 +35,7 @@ def analyze_image(imagepath,mime_type):
 
 @app.post('/vision')
 def vision():
-    file = request.files['the_file']
+    file = request.files['image_file']
     mime_type = file.mimetype
 
     if not mime_type.startswith('image/'):
