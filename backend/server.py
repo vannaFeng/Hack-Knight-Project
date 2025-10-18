@@ -4,10 +4,14 @@ import os
 from google import genai
 from google.genai import types
 from dotenv import load_dotenv
+from flask_cors import CORS
+
+
 
 load_dotenv()
 api_key = os.getenv("GOOGLE_API_KEY")
 app = Flask(__name__)
+CORS(app)
 client = genai.Client(api_key=api_key)
 
 def analyze_image(imagepath,mime_type):
@@ -21,12 +25,32 @@ def analyze_image(imagepath,mime_type):
         data=image_bytes,
         mime_type=mime_type,
         ),
-        '''
-        Label each object and return a JSON file that indicated the name and quanity. 
-        Each object should have it's own JSON. Thus the the total JSON would be a nest JSON of JSON.
-        The item within the image has be from the fridge and be related to food. 
-        If the item is not related to food send the JSON {Invalid : 0 }.
-        '''
+       """
+        Label each object and return a JSON file that indicates the name and quantity.  
+        Each object should have its own JSON entry. Thus, the total JSON should be a nested JSON of JSON objects.  
+
+        Only include items that are from the fridge and related to food.  
+        If the item is not related to food, return the JSON:
+            { "Invalid": 0 }
+
+        Example format:
+        {
+            "Pie": { "Quantity": 1 },
+            "Peaches": { "Quantity": 2 },
+            "Water Bottle": { "Quantity": 1 },
+            "Apricots": { "Quantity": "multiple" },
+            "Blueberries": { "Quantity": "multiple" },
+            "Bananas": { "Quantity": 3 },
+            "Grapes": { "Quantity": "multiple" },
+            "Orange Juice Bottles": { "Quantity": 2 },
+            "Packaged Meat (Sausage)": { "Quantity": 1 },
+            "Cheese (Round, Foil-Wrapped)": { "Quantity": 2 },
+            "Packaged Chicken": { "Quantity": "multiple" },
+            "Red Bell Pepper": { "Quantity": 1 },
+            "Yellow Bell Peppers": { "Quantity": 2 },
+            "Yogurt/Cream Jars": { "Quantity": 3 }
+        }
+        """
     ]
     )
 
