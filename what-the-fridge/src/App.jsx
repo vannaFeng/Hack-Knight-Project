@@ -9,6 +9,9 @@ function App() {
   const [error, setError] = useState(false);
   const [countLoad, setCountLoad] = useState(false);
 
+  const [resultData, setResultData] = useState(null);
+  const [editingItem, setEditingItem] = useState(null);
+
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -21,6 +24,7 @@ function App() {
 const handleFormSubmission = async (e) => {
   e.preventDefault();
   setCountLoad(true);
+  setResultData(null);
 
   const fileInput = e.target.querySelector('#img_input');
   const file = fileInput.files[0];
@@ -28,10 +32,12 @@ const handleFormSubmission = async (e) => {
   if (!file) {
     console.log('nothing sent');
     setError(true);
+    setCountLoad(false);
     return;
   }
 
   console.log('image sent');
+  setIsOpen(false);
 
   const formData = new FormData();
   formData.append('image_file', file);
@@ -44,23 +50,36 @@ const handleFormSubmission = async (e) => {
 
     const data = await response.json();
     console.log('Status:', response.status);
-    console.log('Response data:', data);
+    console.log('Response data:', data.result);
+
+    let raw = data.result;
+    raw = raw.replace(/```json\s*/, '').replace(/```/, '');
+
+    let parsedData;
+    try {
+      parsedData = JSON.parse(raw);
+    } catch (err) {
+      console.error('Failed to parse JSON:', err);
+      parsedData = {};
+    }
 
     if (response.ok) {
-      console.log(data.result);
+      setResultData(parsedData);
+      console.log(parsedData);
       setImage2(URL.createObjectURL(file));
-      setIsOpen(false);
       setImage(null);
     } else {
       console.error(data.error || 'Something went wrong');
     }
   } catch (err) {
     console.error('Network error:', err);
+  } finally {
+    setCountLoad(false);
   }
 };
 
   return (
-    <div className="bg-[#0e0e0e] h-screen w-screen">
+    <div className="bg-[#0e0e0e] h-screen w-screen flex flex-row">
       <div className="absolute inset-0 bg-gradient-radial from-[#3a3a3a] via-[#1a1a1a] to-[#0e0e0e] opacity-90 h-screen w-screen pointer-events-none"></div>
       <div className="bg-/5 backdrop-blur-xl border border-white/10 rounded-2xl p-8 shadow-[0_0_40px_rgba(0,0,0,0.6)] w-1/4 h-full slide-fade-in" >
         <div className="flex flex-col items-center justify-center ml-5 pr-0">
@@ -143,8 +162,73 @@ const handleFormSubmission = async (e) => {
               />
             </div>
 
-          </div>
+        </div>
       </div>
+      
+      {/* Right Half Section */}
+      <div className="absolute inset-0 bg-gradient-radial from-[#3a3a3a] via-[#1a1a1a] to-[#0e0e0e] opacity-90 h-screen w-3/4 pointer-events-none flex left-1/4 justify-center align-center font-titillium">
+          
+          {countLoad && (
+            <p className="text-white text-3xl mt-5">Counting Items...</p>
+          )}
+
+          {!countLoad && resultData && (
+            <div className="w-full max-w-2xl text-white">
+              <p className="text-3xl mb-4 mt-5">Finished Counting!</p>
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr>
+                    <th className="border-b border-gray-400 p-2">Item</th>
+                    <th className="border-b border-gray-400 p-2">Quantity</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {Object.entries(resultData).map(([item, info]) => (
+                    <tr key={item}>
+                      <td className="border-b border-gray-600 p-2">{item}</td>
+                      <td
+                        className="border-b border-gray-600 p-2 cursor-pointer"
+                        onClick={() => setEditingItem(item)}
+                      >
+                        {editingItem === item ? (
+                          <input
+                            type="number"
+                            className="w-16 bg-gray-700 text-white p-1 rounded"
+                            value={info.Quantity}
+                            autoFocus
+                            onChange={(e) => {
+                              const newQuantity = parseInt(e.target.value, 10) || 0;
+                              setResultData(prevData => ({
+                                ...prevData,
+                                [item]: {
+                                  ...prevData[item],
+                                  Quantity: newQuantity
+                                }
+                              }));
+                            }}
+                            onBlur={() => setEditingItem(null)}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') setEditingItem(null);
+                            }}
+                          />
+                        ) : (
+                          info.Quantity
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+
+          {!countLoad && !resultData && (
+            <p className="text-white text-3xl mt-5">No items counted yet.</p>
+          )}
+
+      </div>
+
+
     </div>
   )
 }
