@@ -17,6 +17,46 @@ function App() {
     }
   };
 
+const handleFormSubmission = async (e) => {
+  e.preventDefault();
+
+  const fileInput = e.target.querySelector('#img_input');
+  const file = fileInput.files[0];
+
+  if (!file) {
+    console.log('nothing sent');
+    setError(true);
+    return;
+  }
+
+  console.log('image sent');
+
+  const formData = new FormData();
+  formData.append('image_file', file);
+
+  try {
+    const response = await fetch('http://127.0.0.1:5000/vision', {
+      method: 'POST',
+      body: formData,
+    });
+
+    const data = await response.json();
+    console.log('Status:', response.status);
+    console.log('Response data:', data);
+
+    if (response.ok) {
+      console.log(data.result);
+      setImage2(URL.createObjectURL(file));
+      setIsOpen(false);
+      setImage(null);
+    } else {
+      console.error(data.error || 'Something went wrong');
+    }
+  } catch (err) {
+    console.error('Network error:', err);
+  }
+};
+
   return (
     <div className="bg-[#0e0e0e] h-screen w-screen">
       <div className="absolute inset-0 bg-gradient-radial from-[#3a3a3a] via-[#1a1a1a] to-[#0e0e0e] opacity-90 h-screen w-screen pointer-events-none"></div>
@@ -48,7 +88,7 @@ function App() {
                     />
                     )}
                     
-                    <form action="/upload" method="post">
+                    <form onSubmit={handleFormSubmission}>
                       <div className="flex justify-center align-center">
                         <label htmlFor="img_input" className="mb-4 bg-neutral-900/25 px-6 py-2 rounded-sm hover:bg-neutral-900/50 hover:scale-110 transition-all duration-300">Browse Files</label>
                       </div>
@@ -58,25 +98,13 @@ function App() {
                         accept="image/*"
                         onChange={(e) => {
                           handleImageChange(e);
-                          setError(false);
                         }}
                         className="hidden"
                       />
 
                       <div className="flex justify-center gap-3">
-                        <button type="submit" onClick={(e) => {
-                            if (!image) {
-                              e.preventDefault();
-                              console.log("nothing sent")
-                              setError(true)
-                            } 
-                            else {
-                              console.log("image sent")
-                              setImage2(image);
-                              setIsOpen(false);
-                              setImage(null);
-                            }
-                          }}
+                        <button 
+                          type="submit"
                           className="px-3 py-1 rounded-lg bg-blue-600 text-white hover:bg-blue-700 hover:scale-110 transition-all duration-300"
                         >
                         Upload
