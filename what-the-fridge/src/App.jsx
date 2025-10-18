@@ -7,6 +7,7 @@ function App() {
   const [image, setImage] = useState(null);
   const [image2, setImage2] = useState(null);
   const [error, setError] = useState(false);
+  const [countLoad, setCountLoad] = useState(false);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -19,6 +20,7 @@ function App() {
 
 const handleFormSubmission = async (e) => {
   e.preventDefault();
+  setCountLoad(true);
 
   const fileInput = e.target.querySelector('#img_input');
   const file = fileInput.files[0];
