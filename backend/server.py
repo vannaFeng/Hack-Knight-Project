@@ -4,10 +4,14 @@ import os
 from google import genai
 from google.genai import types
 from dotenv import load_dotenv
+from flask_cors import CORS
+
+
 
 load_dotenv()
 api_key = os.getenv("GOOGLE_API_KEY")
 app = Flask(__name__)
+CORS(app)
 client = genai.Client(api_key=api_key)
 
 def analyze_image(imagepath,mime_type):

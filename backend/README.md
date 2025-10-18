@@ -35,6 +35,7 @@ source .venv/bin/activate
 pip install Flask
 pip install google-genai
 pip install python-dotenv
+pip install flask-cors
 ```
 5. Create a .env file in the backend directory
 - You can generate one here: [Create a Google API Key](https://aistudio.google.com/api-keys)
