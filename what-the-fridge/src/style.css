@@ -5,3 +5,18 @@
   font-weight: 400;
   font-style: normal;
 }
+
+@keyframes slideFadeIn {
+  0% {
+    transform: translateX(-100px);
+    opacity:0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity:1;
+  }
+}
+
+.slide-fade-in {
+  animation: slideFadeIn 1s ease-out forwards;
+}
