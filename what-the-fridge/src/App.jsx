@@ -70,7 +70,7 @@ const handleFormSubmission = async (e) => {
   formData.append('image_file', file);
 
   try {
-    const response = await fetch('http://127.0.0.1:5000/vision', {
+    const response = await fetch('https://what-the-fridge.onrender.com/vision', {
       method: 'POST',
       body: formData,
     });
@@ -421,7 +421,7 @@ const handleFormSubmission = async (e) => {
                     setSearchLoad(true);
 
                     try {
-                      const response = await fetch('http://127.0.0.1:5000/generate_recipe', {  
+                      const response = await fetch('https://what-the-fridge.onrender.com/generate_recipe', {  
                           method: 'POST',
                           headers: { "Content-Type": "application/json"},
                           body: JSON.stringify(dataToSend),
