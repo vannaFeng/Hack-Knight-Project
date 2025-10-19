@@ -23,7 +23,7 @@ Cooking just got a whole lot easier (and smarter). Welcome to **What The Fridge*
 
 Link: 
 
-![Demo Video](https://youtu.be/wHXeJlj0U_A)
+![Demo Video][https://youtu.be/wHXeJlj0U_A]
 
 ## Key Feature:
 - **Upload Fridge Image**: Snap or upload a photo of your fridge, and we’ll automatically scan and identify the ingredients inside.
