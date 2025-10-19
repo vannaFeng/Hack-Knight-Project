@@ -21,9 +21,7 @@ Cooking just got a whole lot easier (and smarter). Welcome to **What The Fridge*
 
 ## Youtube Video 
 
-Link: 
-
-![Demo Video](https://youtu.be/wHXeJlj0U_A)
+Link: https://youtu.be/wHXeJlj0U_A
 
 ## Key Feature:
 - **Upload Fridge Image**: Snap or upload a photo of your fridge, and we’ll automatically scan and identify the ingredients inside.
