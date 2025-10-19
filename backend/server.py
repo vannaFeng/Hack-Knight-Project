@@ -12,7 +12,7 @@ api_key = os.getenv("GOOGLE_API_KEY")
 
 app = Flask(__name__)
 # Enable CORS for all routes and origins
-CORS(app, origins="*", methods=["GET", "POST", "OPTIONS"], allow_headers=["Content-Type"])
+CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
 
 client = genai.Client(api_key=api_key)
 
@@ -101,6 +101,8 @@ def generate_recipe():
     if request.method == 'OPTIONS':
         return '', 200
     
+    data = request.get_json()
+
     # Validate incoming JSON
     if not data or not isinstance(data, dict):
         return jsonify({'error': 'Invalid JSON format. Expected a dictionary.'}), 400
@@ -130,7 +132,7 @@ def generate_recipe():
         2. "NutritionalValues (Estimated)": a JSON object with "Calories", "Protein (g)", "Fat (g)", and "Carbohydrates (g)".
         3. "AverageCostOfDishOutside (Estimated)" (float).
         4. "MoneySavedIfMade" (float).
-    - Give multiples recipes about 5-6.
+    - Give multiples recipes about 10 to 15.
     - Use available ingredients only.
     - Avoid any ingredients containing or derived from {allergies} if listed.
     - Output must be **valid JSON only** — no explanations, no markdown, no comments.
@@ -188,5 +190,3 @@ def generate_recipe():
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-
-
