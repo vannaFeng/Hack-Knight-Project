@@ -69,8 +69,8 @@ cd backend
 pip install -r requirements.txt
 ```
 
-3. Create and activate a virtual environment
-
+**3. Create and activate a virtual environment**
+1.
 - MacOS/Linux
 ```Bash
 python3 -m venv .venv
@@ -81,7 +81,7 @@ python3 -m venv .venv
 py -3 -m venv .venv
 ```
 
-4. Activate virtual enviroment based on OS
+2. Activate virtual enviroment based on OS
 
 - MacOS/Linux
 ```bash
@@ -98,7 +98,7 @@ source .venv/bin/activate
 .venv\Scripts\Activate.ps1
 ```
 
-5. Create a .env file in the backend directory
+3. Create a .env file in the backend directory
 - You can generate one here: [Create a Google API Key](https://aistudio.google.com/api-keys)
 Add your Google API key inside:
 ```env
