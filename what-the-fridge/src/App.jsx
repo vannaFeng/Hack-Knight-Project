@@ -132,7 +132,7 @@ const handleFormSubmission = async (e) => {
         <div className="flex flex-col items-center justify-center ml-5 pr-0">
             <p className="text-6xl text-red-50 mt-5 font-titillium mb-6 text-center">WHAT THE FRIDGE?</p>
 
-            <pre className="text-gray-400 text-sm whitespace-pre-wrap text-center mb-10">
+            <pre className="text-gray-400 text-sm whitespace-pre-wrap text-center mb-8">
               Ever stare into your fridge, wondering what to cook for breakfast, lunch, dinner, or even just a snack?
               <br/><br/>
               No worries, snap a photo of your fridge, and we'll suggest recipes based on what you've got.
@@ -199,13 +199,13 @@ const handleFormSubmission = async (e) => {
             )}
             
             <div className="mt-5 font-titillium text-gray-500">
-              <p className="my-6 text-center">Last Image Uploaded:</p>
+              <p className="text-center">Last Image Uploaded:</p>
               
               <img
                 id="bottom_image"
                 src={image2 ? image2 : "/assests/logo.png"}
                 alt="Preview"
-                className="w-full h-70 object-contain rounded-lg overflow-hidden hover:scale-110 transition-all duration-300"
+                className="w-full h-auto object-contain rounded-lg overflow-hidden hover:scale-102 transition-all duration-300"
               />
             </div>
 
