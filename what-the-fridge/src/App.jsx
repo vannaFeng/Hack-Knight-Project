@@ -1,5 +1,6 @@
 import './style.css'
 import { useState, useEffect } from 'react'
+import RecipeCard from './Card';
 
 function App() {
 
@@ -8,8 +9,10 @@ function App() {
   const [image2, setImage2] = useState(null);
   const [error, setError] = useState(false);
   const [countLoad, setCountLoad] = useState(false);
+  const [searchLoad, setSearchLoad] = useState(false);
 
   const [resultData, setResultData] = useState(null);
+  const [dishData, setDishData] = useState(null);
   const [editingItem, setEditingItem] = useState(null);
   const [allergyInput, setAllergyInput] = useState('');
   const [sentResults, setSentResults] = useState(false);
@@ -19,7 +22,7 @@ function App() {
   const [dots, setDots] = useState('');
 
   useEffect(() => {
-    if (!countLoad) {
+    if (!countLoad && !searchLoad) {
       setDots('');
       return;
     }
@@ -29,7 +32,7 @@ function App() {
     }, 500);
 
     return () => clearInterval(interval);
-  }, [countLoad]);
+  }, [countLoad, searchLoad]);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -44,6 +47,10 @@ const handleFormSubmission = async (e) => {
   e.preventDefault();
   setCountLoad(true);
   setResultData(null);
+  setDishData(null);
+  setSearchLoad(false);
+  setSentResults(false);
+  setError(false);
 
   const fileInput = e.target.querySelector('#img_input');
   const file = fileInput.files[0];
@@ -52,6 +59,7 @@ const handleFormSubmission = async (e) => {
     console.log('nothing sent');
     setError(true);
     setCountLoad(false);
+    setSearchLoad(false);
     return;
   }
 
@@ -110,27 +118,12 @@ const handleFormSubmission = async (e) => {
   const totalPages = Math.ceil(itemsArray.length / itemsPerPage) || 1;
   const [newItemName, setNewItemName] = useState('');
   const [newItemQuantity, setNewItemQuantity] = useState(0);
+  const [newItemPrice, setNewItemPrice] = useState(0);
 
   const visibleItems = itemsArray.slice(
     page * itemsPerPage,
     page * itemsPerPage + itemsPerPage
   );
-
-  const addNewRow = () => {
-    if (!resultData) return;
-
-    let counter = 1;
-    let newKey  = `New Item ${counter}`;
-    while (resultData[newKey]) {
-      counter += 1;
-      newKey = `New Item ${counter}`;
-    }
-
-    setResultData(prevData => ({
-      ...prevData,
-      [newKey]: {Quantity: 0}
-    }));
-  };
 
   return (
     <div className="bg-[#0e0e0e] h-screen w-screen flex flex-row">
@@ -220,13 +213,13 @@ const handleFormSubmission = async (e) => {
       </div>
       
       {/* Right Half Section */}
-      <div className="absolute inset-0 bg-gradient-radial from-[#3a3a3a] via-[#1a1a1a] to-[#0e0e0e] opacity-90 h-screen w-3/4 flex left-1/4 justify-center align-center font-titillium">
+      <div className="absolute inset-0 bg-gradient-radial from-[#3a3a3a] via-[#1a1a1a] to-[#0e0e0e] opacity-90 h-screen w-3/4 flex left-1/4 justify-center items-center font-titillium">
           
           {countLoad && !sentResults && (
             <p className="text-white text-3xl mt-5 text-center">Counting Items{dots}</p>
           )}
 
-          {!countLoad && resultData && !sentResults && (
+          {!countLoad && resultData && !sentResults && !searchLoad && (
             <div className="w-full max-w-2xl text-white">
               <p className="text-3xl mb-4 mt-5 text-center">Finished Counting!</p>
               <table className="w-full text-left border-collapse">
@@ -234,17 +227,19 @@ const handleFormSubmission = async (e) => {
                   <tr>
                     <th className="border-b border-gray-400 p-2">Item</th>
                     <th className="border-b border-gray-400 p-2">Quantity</th>
+                    <th className="border-b border-gray-400 p-2">Price / Unit ($)</th>
+                    <th className="border-b border-gray-400 p-2">Total ($)</th>
                   </tr>
                 </thead>
                 <tbody>
                   {visibleItems.map(([item, info]) => (
-                    <tr key={item} className={`border-b border-gray-600 p-2 drop-animation`}>
-                      <td className="p-2">{item}</td>
+                    <tr key={item} className={`p-2 drop-animation`}>
+                      <td className="p-2 border-b border-gray-600">{item}</td>
                       <td
-                        className="p-2 cursor-pointer"
-                        onClick={() => setEditingItem(item)}
+                        className="p-2 cursor-pointer  border-b"
+                        onClick={() => setEditingItem({ name: item, field: 'Quantity' })}
                       >
-                        {editingItem === item ? (
+                        {editingItem?.name === item && editingItem?.field === 'Quantity' ? (
                           <input
                             type="number"
                             className="w-16 bg-gray-700 text-white p-1 rounded"
@@ -272,6 +267,58 @@ const handleFormSubmission = async (e) => {
                           info.Quantity
                         )}
                       </td>
+
+                      <td
+                        className="p-2 cursor-pointer border-b border-gray-600"
+                        onClick={() => setEditingItem({ name: item, field: 'PricePerUnit'})}
+                      >
+                        {editingItem?.name === item && editingItem?.field === 'PricePerUnit' ? (
+                          <input
+                            type="number"
+                            className="w-20 bg-gray-700 text-white p-1 rounded"
+                            value={info.PricePerUnit || 0}
+                            autoFocus
+                            min="0"
+                            step="0.01"
+                            onChange={(e) => {
+                              let newPrice = parseFloat(e.target.value) || 0;
+                              if (newPrice < 0) newPrice = 0;
+                              setResultData(prev => ({
+                                ...prev,
+                                [item]: {
+                                  ...prev[item],
+                                  PricePerUnit: newPrice,
+                                }
+                              }));
+                            }}
+                            onBlur={() => setEditingItem(null)}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') setEditingItem(null);
+                            }}
+                          />
+                        ) : (
+                          info.PricePerUnit ?? 0
+                        )}
+                      </td>
+
+                      <td className="p-2 text-green-400 font-titillium border-b border-gray-600">
+                        ${(info.Quantity * (info.PricePerUnit || 0)).toFixed(2)}
+                      </td>
+
+                      <td className="p-1 text-center">
+                        <button
+                          onClick={() => 
+                            setResultData(prev => {
+                              const updated = { ...prev  };
+                              delete updated[item];
+                              return updated;
+                            })
+                          }
+                          className='hover:bg-red-700 text-white rounded transition-all duration-300 hover:scale-110'
+                        >
+                        🗑️
+                        </button>
+                      </td>
                     </tr>
                   ))}
                   
@@ -287,6 +334,7 @@ const handleFormSubmission = async (e) => {
                           onChange={(e) => setNewItemName(e.target.value)}
                         />
                       </td>
+
                       <td className="border-b border-gray-600 p-2">
                         <input
                           type="number"
@@ -294,21 +342,39 @@ const handleFormSubmission = async (e) => {
                           value={newItemQuantity}
                           onChange={(e) => setNewItemQuantity(parseInt(e.target.value, 10) || 0)}
                         />
+                      </td>
+
+                      <td className="border-b border-gray-600 p-2">
+                        <input
+                          type="number"
+                          className="w-20 bg-gray-700 text-white p-1 rounded"
+                          placeholder="Price"
+                          value={newItemPrice}
+                          onChange={(e) => setNewItemPrice(parseFloat(e.target.value) || 0)}
+                        />
+                      </td>
+
+                      <td className="border-b border-gray-600 p-2">
                         <button
                           className="ml-2 px-2 py-1 bg-green-600 rounded hover:bg-green-500 text-white"
                           onClick={() => {
                             if (!newItemName) return;
                             setResultData(prev => ({
                               ...prev,
-                              [newItemName]: { Quantity: newItemQuantity }
+                              [newItemName]: { 
+                                Quantity: newItemQuantity,
+                                PricePerUnit: newItemPrice,
+                              }
                             }));
                             setNewItemName('');
                             setNewItemQuantity(0);
+                            setNewItemPrice(0);
                           }}
                         >
                           Add
                         </button>
                       </td>
+
                     </tr>
                     )}
                 </tbody>
@@ -345,19 +411,38 @@ const handleFormSubmission = async (e) => {
                 </input>
 
                 <button 
-                  onClick={() =>{
+                  onClick={async (e) =>{
+                    e.preventDefault();
                     if (!resultData) return;
                     
-                    setResultData(prevData => {
-                      const updatedData = {
-                        ...prevData,
-                        Allergies: allergyInput
-                      };
-                      console.log("Updated Data:", updatedData);
-                      return updatedData;
-                    });
-                    
-                    setSentResults(true);
+                    const dataToSend = { ...resultData };
+                    if (allergyInput.trim()) dataToSend.Allergies = allergyInput.trim();
+                    console.log("Data we're sending:", dataToSend)
+                    setSearchLoad(true);
+
+                    try {
+                      const response = await fetch('http://127.0.0.1:5000/generate_recipe', {  
+                          method: 'POST',
+                          headers: { "Content-Type": "application/json"},
+                          body: JSON.stringify(dataToSend),
+                      });
+
+                      const data = await response.json();
+                      console.log("Recipe Response:", data);
+
+                      if (response.ok) {
+                        setDishData(data);
+                        setSentResults(true);
+                      } else {
+                        if (data.error === "Invalid JSON format. Expected a dictionary.") alert(`You have no recipes, please add them or upload your fridge photo again`)
+                        else alert(`Error: ${data.error || "Something went wrong"}`);
+                      }
+                    } catch (error) {
+                      console.error("Network error:", error);
+                      alert("Failed to connect to server");
+                    } finally {
+                      setSearchLoad(false);
+                    }
                   }}
                   className="px-4 py-2 w-1/4 bg-green-400 text-white rounded-lg hover:bg-green-600 font-titillium hover:scale-110 transition-all duration-300 mt-5"
                 >
@@ -372,7 +457,17 @@ const handleFormSubmission = async (e) => {
             <p className="text-white text-3xl mt-5 text-center">No items counted yet.</p>
           )}
 
+          {searchLoad && (
+            <p className="text-white text-3xl mt-5 text-center">Searching for delicious recipes{dots}</p>
+          )}
 
+          {dishData && !searchLoad && (
+            <div className="h-screen w-full overflow-y-auto p-4 space-y-4 font-titillium">
+              {Object.entries(dishData).map(([title, recipe]) => (
+                <RecipeCard key={title} title={title} data={recipe} />
+              ))}
+            </div>
+          )}
 
       </div>
     </div>
