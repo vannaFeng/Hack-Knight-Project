@@ -1,5 +1,5 @@
-{
-  "builds": [
+  {
+    "builds": [
     {
       "src": "what-the-fridge/package.json",
       "use": "@vercel/static-build",
@@ -11,7 +11,16 @@
     }
   ],
   "routes": [
-    { "src": "/api/(.*)", "dest": "backend/server.py" },
-    { "src": "/(.*)", "dest": "what-the-fridge/dist/$1" }
+    {
+      "src": "/api/(.*)",
+      "dest": "backend/server.py"
+    },
+    {
+      "handle": "filesystem"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
+    }
   ]
 }
