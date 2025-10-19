@@ -203,7 +203,7 @@ const handleFormSubmission = async (e) => {
               
               <img
                 id="bottom_image"
-                src={image2 ? image2 : "/assests/placeholder.jpg"}
+                src={image2 ? image2 : "/assests/logo.png"}
                 alt="Preview"
                 className="w-full h-70 object-contain rounded-lg overflow-hidden hover:scale-110 transition-all duration-300"
               />
