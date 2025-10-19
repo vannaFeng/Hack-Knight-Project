@@ -236,7 +236,7 @@ const handleFormSubmission = async (e) => {
                     <tr key={item} className={`p-2 drop-animation`}>
                       <td className="p-2 border-b border-gray-600">{item}</td>
                       <td
-                        className="p-2 cursor-pointer  border-b"
+                        className="p-2 cursor-pointer  border-b  border-gray-600"
                         onClick={() => setEditingItem({ name: item, field: 'Quantity' })}
                       >
                         {editingItem?.name === item && editingItem?.field === 'Quantity' ? (
