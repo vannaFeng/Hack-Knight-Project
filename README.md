@@ -1,4 +1,6 @@
- ![logo](./image/WhatTheFridge.png)
+<p align="center">
+  <img src="./image/WhatTheFridge.png" alt="logo" width="300">
+</p>
 
 # What The Fridge
 
@@ -36,7 +38,9 @@ Link:
 
 ## Flowchart
 
-![Flowchart](./image/flowchart.png)
+<p align="center">
+  <img src="./image/flowchart.png" alt="logo" width="300">
+</p>
 
 The diagram above illustrates the system architecture for image uploads and recipe generation using Flask and Google Gemini.
 
