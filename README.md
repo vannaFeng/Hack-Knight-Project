@@ -1,4 +1,6 @@
- ![logo](./image/WhatTheFridge.png)
+<p align="center">
+  <img src="./image/WhatTheFridge.png" alt="logo" width="300">
+</p>
 
 # What The Fridge
 
@@ -36,7 +38,9 @@ Link:
 
 ## Flowchart
 
-![Flowchart](./image/flowchart.png)
+<p align="center">
+  <img src="./image/flowchart.png" alt="logo" width="300">
+</p>
 
 The diagram above illustrates the system architecture for image uploads and recipe generation using Flask and Google Gemini.
 
@@ -70,7 +74,7 @@ pip install -r requirements.txt
 ```
 
 **3. Create and activate a virtual environment**
-1.
+1.Create virtual environment based on OS
 - MacOS/Linux
 ```Bash
 python3 -m venv .venv
@@ -81,7 +85,7 @@ python3 -m venv .venv
 py -3 -m venv .venv
 ```
 
-2. Activate virtual enviroment based on OS
+2. Activate virtual environment based on OS
 
 - MacOS/Linux
 ```bash
