@@ -12,7 +12,7 @@ api_key = os.getenv("GOOGLE_API_KEY")
 
 app = Flask(__name__)
 # Enable CORS for all routes and origins
-CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
+CORS(app, origins="*", methods=["GET", "POST", "OPTIONS"], allow_headers=["Content-Type"])
 
 client = genai.Client(api_key=api_key)
 
@@ -96,7 +96,7 @@ def vision():
         os.remove(temp_path)
 
 
-@app.route('/generate_recipe', methods=['POST', 'OPTIONS'])
+@app.route('/generate_recipe', methods=['POST'])
 def generate_recipe():
     data = request.get_json()
     if request.method == 'OPTIONS':
@@ -189,3 +189,14 @@ def generate_recipe():
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+@app.before_request
+def handle_options():
+    if request.method == "OPTIONS":
+        response = app.make_default_options_response()
+        headers = response.headers
+
+        headers["Access-Control-Allow-Origin"] = "*"
+        headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
+        headers["Access-Control-Allow-Headers"] = "Content-Type"
+        return response
