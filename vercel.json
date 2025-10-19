@@ -1,0 +1,23 @@
+{
+  "builds": [
+    {
+      "src": "what-the-fridge/package.json",
+      "use": "@vercel/static-build",
+      "config": { "distDir": "what-the-fridge/dist" }
+    },
+    {
+      "src": "backend/server.py",
+      "use": "@vercel/python"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "backend/server.py"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "what-the-fridge/dist/$1"
+    }
+  ]
+}
