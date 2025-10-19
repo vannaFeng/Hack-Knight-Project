@@ -132,7 +132,7 @@ def generate_recipe():
         2. "NutritionalValues (Estimated)": a JSON object with "Calories", "Protein (g)", "Fat (g)", and "Carbohydrates (g)".
         3. "AverageCostOfDishOutside (Estimated)" (float).
         4. "MoneySavedIfMade" (float).
-    - Give multiples recipes about 10 to 15.
+    - Give multiples recipes about 5-6.
     - Use available ingredients only.
     - Avoid any ingredients containing or derived from {allergies} if listed.
     - Output must be **valid JSON only** — no explanations, no markdown, no comments.
