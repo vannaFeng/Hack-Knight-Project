@@ -96,9 +96,8 @@ def vision():
         os.remove(temp_path)
 
 
-@app.route('/generate_recipe', methods=['POST'])
+@app.route('/generate_recipe', methods=['POST', 'OPTIONS'])
 def generate_recipe():
-    data = request.get_json()
     if request.method == 'OPTIONS':
         return '', 200
     
@@ -131,7 +130,7 @@ def generate_recipe():
         2. "NutritionalValues (Estimated)": a JSON object with "Calories", "Protein (g)", "Fat (g)", and "Carbohydrates (g)".
         3. "AverageCostOfDishOutside (Estimated)" (float).
         4. "MoneySavedIfMade" (float).
-    - Give multiples recipes about 10 to 15.
+    - Give multiples recipes about 5-6.
     - Use available ingredients only.
     - Avoid any ingredients containing or derived from {allergies} if listed.
     - Output must be **valid JSON only** — no explanations, no markdown, no comments.
@@ -190,13 +189,4 @@ def generate_recipe():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-@app.before_request
-def handle_options():
-    if request.method == "OPTIONS":
-        response = app.make_default_options_response()
-        headers = response.headers
 
-        headers["Access-Control-Allow-Origin"] = "*"
-        headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
-        headers["Access-Control-Allow-Headers"] = "Content-Type"
-        return response
