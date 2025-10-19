@@ -96,10 +96,12 @@ def vision():
         os.remove(temp_path)
 
 
-@app.route('/generate_recipe', methods=['POST'])
+@app.route('/generate_recipe', methods=['POST', 'OPTIONS'])
 def generate_recipe():
     data = request.get_json()
-
+    if request.method == 'OPTIONS':
+        return '', 200
+    
     # Validate incoming JSON
     if not data or not isinstance(data, dict):
         return jsonify({'error': 'Invalid JSON format. Expected a dictionary.'}), 400
